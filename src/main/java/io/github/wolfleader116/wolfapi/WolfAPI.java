@@ -1,19 +1,16 @@
 package io.github.wolfleader116.wolfapi;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import net.minecraft.server.v1_8_R2.EnumParticle;
+import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
 
-public class WolfAPI extends JavaPlugin {
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
-	public static WolfAPI plugin;
-	
-	@Override
-	public void onEnable() {
-		plugin = this;
+public class WolfAPI {
+
+	public void Particle(EnumParticle particle, boolean boo, float xcent, float ycent, float zcent, float xoff, float yoff, float zoff, int speed, int amount, Player player) {
+		PacketPlayOutWorldParticles particlepacket = new PacketPlayOutWorldParticles(particle, boo, xcent, ycent, zcent, xoff, yoff, zoff, speed, amount);
+		((CraftPlayer) player).getHandle().playerConnection.sendPacket(particlepacket);
 	}
 	
-	@Override
-	public void onDisable() {
-		plugin = null;
-	}
-
 }
