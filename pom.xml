@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.wolfleader116</groupId>
   <artifactId>WolfAPI</artifactId>
-  <version>Beta 0.1</version>
+  <version>1.0</version>
   <build>
       <plugins>
           <plugin>
