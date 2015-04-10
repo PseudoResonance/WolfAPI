@@ -20,7 +20,7 @@ public class WolfAPI {
 		((CraftPlayer) player).getHandle().playerConnection.sendPacket(particlepacket);
 	}
 
-	public ItemStack createItem(Material material, int amount, short data, String name, String lore, String ench) {
+	public static ItemStack createItem(Material material, int amount, short data, String name, String lore, String ench) {
 		ItemStack item = new ItemStack(material, amount, data);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(name);
