@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class WolfAPI {
 
-	public void Particle(EnumParticle particle, boolean boo, float xcent, float ycent, float zcent, float xoff, float yoff, float zoff, int speed, int amount, Player player) {
+	public void Particle(EnumParticle particle, boolean boo, float xcent, float ycent, float zcent, int xoff, int yoff, int zoff, int speed, int amount, Player player) {
 		PacketPlayOutWorldParticles particlepacket = new PacketPlayOutWorldParticles(particle, boo, xcent, ycent, zcent, xoff, yoff, zoff, speed, amount);
 		((CraftPlayer) player).getHandle().playerConnection.sendPacket(particlepacket);
 	}
