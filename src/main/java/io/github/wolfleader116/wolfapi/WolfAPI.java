@@ -54,11 +54,11 @@ public class WolfAPI extends JavaPlugin {
 		}
 	}
 	
-	public void message(String message, Player player, String prefix) {
+	public static void message(String message, Player player, String prefix) {
 		player.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.GREEN + message);
 	}
 	
-	public void error(String error, Player player, String prefix) {
+	public static void error(String error, Player player, String prefix) {
 		switch (error) {
 		case "permission":
 			particle("fireworks_spark", true, (float) player.getLocation().getX(), (float) player.getLocation().getY() + 1, (float) player.getLocation().getZ(), 1, 1, 1, 0, 5, player);
