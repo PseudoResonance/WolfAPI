@@ -64,6 +64,14 @@ public class WolfAPI extends JavaPlugin {
 			particle("fireworks_spark", true, (float) player.getLocation().getX(), (float) player.getLocation().getY() + 1, (float) player.getLocation().getZ(), 1, 1, 1, 0, 5, player);
 			player.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "You do not have permission to do this!");
 			break;
+		case "nojoin":
+			particle("fireworks_spark", true, (float) player.getLocation().getX(), (float) player.getLocation().getY() + 1, (float) player.getLocation().getZ(), 1, 1, 1, 0, 5, player);
+			player.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That player has never joined the server!");
+			break;
+		case "notonline":
+			particle("fireworks_spark", true, (float) player.getLocation().getX(), (float) player.getLocation().getY() + 1, (float) player.getLocation().getZ(), 1, 1, 1, 0, 5, player);
+			player.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That player is not online!");
+			break;
 		default:
 			player.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "There has been an issue! Please contact the server staff.");
 			break;
