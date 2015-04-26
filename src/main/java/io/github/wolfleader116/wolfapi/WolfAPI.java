@@ -9,10 +9,8 @@ import net.minecraft.server.v1_8_R2.EnumParticle;
 import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WolfAPI extends JavaPlugin {
