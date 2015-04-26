@@ -245,7 +245,7 @@ Items:
   end_portal_frame0: "End Portal Frame"
   end_stone0: "End Stone"
   dragon_egg0: "Dragon Egg"
-  redstone_lamp0: "Redstone Lamp"
+  redstone_lamp_off0: "Redstone Lamp"
   double_wooden_slab0: "Double Oak Wood Slab"
   double_wooden_slab1: "Double Spruce Wood Slab"
   double_wooden_slab2: "Double Birch Wood Slab"

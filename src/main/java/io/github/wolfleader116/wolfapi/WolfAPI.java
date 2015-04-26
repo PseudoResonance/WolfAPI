@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import net.minecraft.server.v1_8_R2.EnumParticle;
 import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WolfAPI extends JavaPlugin {
@@ -30,6 +33,7 @@ public class WolfAPI extends JavaPlugin {
 				copy(getResource("itemdatabase.yml"), db);
 			}
 		}
+		ItemStack item = new ItemStack(Material.REDSTONE_LAMP_OFF, 1);
 		plugin = this;
 	}
 	
