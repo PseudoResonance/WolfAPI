@@ -33,7 +33,6 @@ public class WolfAPI extends JavaPlugin {
 				copy(getResource("itemdatabase.yml"), db);
 			}
 		}
-		ItemStack item = new ItemStack(Material.REDSTONE_LAMP_OFF, 1);
 		plugin = this;
 	}
 	
