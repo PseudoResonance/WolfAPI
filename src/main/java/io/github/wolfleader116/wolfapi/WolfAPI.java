@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import net.minecraft.server.v1_8_R2.EnumParticle;
 import net.minecraft.server.v1_8_R2.PacketPlayOutWorldParticles;
 
@@ -25,7 +24,7 @@ public class WolfAPI extends JavaPlugin {
 			copy(getResource("itemdatabase.yml"), db);
 		} else {
 			Config dab = new Config("itemdatabase", this);
-			if (dab.getConfig().getInt("Version") != 1) {
+			if (dab.getConfig().getInt("Version") != 2) {
 				db.delete();
 				db.getParentFile().mkdirs();
 				copy(getResource("itemdatabase.yml"), db);
