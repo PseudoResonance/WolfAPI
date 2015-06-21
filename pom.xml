@@ -30,6 +30,20 @@
 			</plugin>
 		</plugins>
 		<finalName>${artifactId}</finalName>
+		
+		<!-- Make sure Maven compiles in YML Files -->
+		<resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*.yml</include>
+                </includes>
+            </resource>
+       	</resources>
+       	<!-- Idea by @xiurobert & taken from uSkyBlock -->
+       	
 	</build>
 	<repositories>
 		<repository>
