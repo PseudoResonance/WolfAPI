@@ -14,21 +14,25 @@ public enum Errors {
 	
 	public static void sendError(Errors error, Player p, String prefix) {
 		Location loc = p.getLocation();
-		if (error == Errors.NO_PERMISSION) {
-			Particles.FIREWORKS_SPARK.display((float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5, loc, p);
-			p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "You do not have permission to do this!");
-		} else if (error == Errors.NOT_ONLINE) {
-			Particles.FIREWORKS_SPARK.display((float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5, loc, p);
-			p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That player is not online!");
-		} else if (error == Errors.NEVER_JOINED) {
-			Particles.FIREWORKS_SPARK.display((float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5, loc, p);
-			p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That player has never joined the server!");
-		} else if (error == Errors.NOT_NUMBER) {
-			Particles.FIREWORKS_SPARK.display((float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5, loc, p);
-			p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That is not a number!");
-		} else if (error == Errors.DEFAULT) {
-			Particles.FIREWORKS_SPARK.display((float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5, loc, p);
-			p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "There has been an error! Please contact server administrators.");
+		try {
+			if (error == Errors.NO_PERMISSION) {
+				ParticleEffect.FIREWORKS_SPARK.sendToPlayer(p, loc, (float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5);
+				p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "You do not have permission to do this!");
+			} else if (error == Errors.NOT_ONLINE) {
+				ParticleEffect.FIREWORKS_SPARK.sendToPlayer(p, loc, (float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5);
+				p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That player is not online!");
+			} else if (error == Errors.NEVER_JOINED) {
+				ParticleEffect.FIREWORKS_SPARK.sendToPlayer(p, loc, (float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5);
+				p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That player has never joined the server!");
+			} else if (error == Errors.NOT_NUMBER) {
+				ParticleEffect.FIREWORKS_SPARK.sendToPlayer(p, loc, (float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5);
+				p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "That is not a number!");
+			} else if (error == Errors.DEFAULT) {
+				ParticleEffect.FIREWORKS_SPARK.sendToPlayer(p, loc, (float) 0.8, (float) 0.8, (float) 0.8, (float) 0, 5);
+				p.sendMessage(ChatColor.BLUE + ChatColor.stripColor(prefix) + ChatColor.BLUE + "> " + ChatColor.RED + "There has been an error! Please contact server administrators.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
