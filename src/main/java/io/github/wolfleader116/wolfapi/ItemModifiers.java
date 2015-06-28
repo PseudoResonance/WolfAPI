@@ -7,7 +7,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemModifiers {
 	
-	public ItemStack setSoulbound(ItemStack item) {
+	public static ItemStack setSoulbound(ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lores = meta.getLore();
 		lores.add("");
@@ -17,7 +17,7 @@ public class ItemModifiers {
 		return item;
 	}
 	
-	public ItemStack setFinal(ItemStack item) {
+	public static ItemStack setFinal(ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lores = meta.getLore();
 		lores.add("");
@@ -27,7 +27,7 @@ public class ItemModifiers {
 		return item;
 	}
 	
-	public ItemStack setUnbreakable(ItemStack item) {
+	public static ItemStack setUnbreakable(ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lores = meta.getLore();
 		lores.add("");
