@@ -44,7 +44,7 @@ public class WolfAPI extends JavaPlugin implements Listener {
 		Inventory inventory = e.getInventory();
 		List<String> lores = clicked.getItemMeta().getLore();
 		for (String lore : lores) {
-			if (lore.contains("§5§iFinal §f- §aCannot be modified or repaired.")) {
+			if (ChatColor.stripColor(lore).equals("Final - Cannot be modified or repaired.")) {
 				if (inventory instanceof AnvilInventory) {
 					message("That item is final! It cannot be modified or repaired!", (Player) e.getWhoClicked(), "WolfAPI");
 					e.setCancelled(true);
@@ -58,7 +58,7 @@ public class WolfAPI extends JavaPlugin implements Listener {
 		ItemStack item = e.getItem();
 		List<String> lores = item.getItemMeta().getLore();
 		for (String lore : lores) {
-			if (lore.contains("§5§iUnbreakable §f- §aCannot be broken.")) {
+			if (ChatColor.stripColor(lore).contains("Unbreakable - Cannot be broken.")) {
 				e.setCancelled(true);
 			}
 		}
@@ -70,7 +70,7 @@ public class WolfAPI extends JavaPlugin implements Listener {
 		for (ItemStack item : items) {
 			List<String> lores = item.getItemMeta().getLore();
 			for (String lore : lores) {
-				if (lore.contains("§5§iSoulbound §f- §aCannot be dropped upon death.")) {
+				if (ChatColor.stripColor(lore).contains("Soulbound - Cannot be dropped upon death.")) {
 					e.getDrops().remove(item);
 					soulbound.put(e.getEntity(), item);
 				}

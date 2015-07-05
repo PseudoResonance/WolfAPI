@@ -11,7 +11,7 @@ public class ItemModifiers {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lores = meta.getLore();
 		lores.add("");
-		lores.add("§5§iSoulbound §f- §aCannot be dropped upon death.");
+		lores.add("§5§nSoulbound §f- §aCannot be dropped upon death.");
 		meta.setLore(lores);
 		item.setItemMeta(meta);
 		return item;
@@ -21,7 +21,7 @@ public class ItemModifiers {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lores = meta.getLore();
 		lores.add("");
-		lores.add("§5§iFinal §f- §aCannot be modified or repaired.");
+		lores.add("§5§nFinal §f- §aCannot be modified or repaired.");
 		meta.setLore(lores);
 		item.setItemMeta(meta);
 		return item;
@@ -31,7 +31,7 @@ public class ItemModifiers {
 		ItemMeta meta = item.getItemMeta();
 		List<String> lores = meta.getLore();
 		lores.add("");
-		lores.add("§5§iUnbreakable §f- §aCannot be broken.");
+		lores.add("§5§nUnbreakable §f- §aCannot be broken.");
 		meta.setLore(lores);
 		item.setItemMeta(meta);
 		return item;
