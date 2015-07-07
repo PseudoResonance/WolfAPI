@@ -9,16 +9,16 @@
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
-            <resource>
-                <targetPath>.</targetPath>
-                <filtering>true</filtering>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>*.yml</include>
-                    <include>LICENSE</include>
-                </includes>
-            </resource>
-       	</resources>
+            		<resource>
+                		<targetPath>.</targetPath>
+                		<filtering>true</filtering>
+                		<directory>src/main/resources</directory>
+                		<includes>
+                    			<include>*.yml</include>
+                    			<include>LICENSE</include>
+                		</includes>
+            		</resource>
+       		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
