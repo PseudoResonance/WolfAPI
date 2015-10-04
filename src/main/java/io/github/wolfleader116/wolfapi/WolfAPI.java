@@ -2,8 +2,8 @@ package io.github.wolfleader116.wolfapi;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,8 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class WolfAPI extends JavaPlugin implements Listener {
 	
-	private static final Logger log = Logger.getLogger("Minecraft");
-	
 	private HashMap<Player, ItemStack> soulbound = new HashMap<Player, ItemStack>();
 
 	public static WolfAPI plugin;
@@ -29,6 +27,7 @@ public class WolfAPI extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		plugin = this;
+		Bukkit.getPluginManager().registerEvents(this, this);
 	}
 	
 	@Override
@@ -46,12 +45,9 @@ public class WolfAPI extends JavaPlugin implements Listener {
 			ItemStack clicked = e.getCurrentItem();
 			List<String> lores = clicked.getItemMeta().getLore();
 			for (String lore : lores) {
-				log.severe(lore);
 				if (ChatColor.stripColor(lore).equals("Final - Cannot be modified or repaired.")) {
-					log.severe("Is final");
 					e.getView().getType();
 					if (e.getView().getType() == InventoryType.ANVIL) {
-						log.severe("Is anvil");
 						message("That item is final! It cannot be modified or repaired!", (Player) e.getWhoClicked(), "WolfAPI");
 						e.setCancelled(true);
 					}
