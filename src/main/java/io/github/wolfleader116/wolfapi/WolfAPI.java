@@ -11,10 +11,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,16 +41,13 @@ public class WolfAPI extends JavaPlugin implements Listener {
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClick(InventoryClickEvent e) {
-		if (!(e.isCancelled()) && e.getWhoClicked() instanceof Player) {
-			ItemStack clicked = e.getCurrentItem();
-			List<String> lores = clicked.getItemMeta().getLore();
-			for (String lore : lores) {
-				if (ChatColor.stripColor(lore).equals("Final - Cannot be modified or repaired.")) {
-					e.getView().getType();
-					if (e.getView().getType() == InventoryType.ANVIL) {
-						message("That item is final! It cannot be modified or repaired!", (Player) e.getWhoClicked(), "WolfAPI");
-						e.setCancelled(true);
-					}
+		ItemStack clicked = e.getCurrentItem();
+		List<String> lores = clicked.getItemMeta().getLore();
+		for (String lore : lores) {
+			if (ChatColor.stripColor(lore).equals("Final - Cannot be modified or repaired.")) {
+				if (e.getInventory() instanceof AnvilInventory) {
+					message("That item is final! It cannot be modified or repaired!", (Player) e.getWhoClicked(), "WolfAPI");
+					e.setCancelled(true);
 				}
 			}
 		}
