@@ -43,11 +43,13 @@ public class WolfAPI extends JavaPlugin implements Listener {
 	public void onInventoryClick(InventoryClickEvent e) {
 		ItemStack clicked = e.getCurrentItem();
 		List<String> lores = clicked.getItemMeta().getLore();
-		for (String lore : lores) {
-			if (ChatColor.stripColor(lore).equals("Final - Cannot be modified or repaired.")) {
-				if (e.getInventory() instanceof AnvilInventory) {
-					message("That item is final! It cannot be modified or repaired!", (Player) e.getWhoClicked(), "WolfAPI");
-					e.setCancelled(true);
+		if (lores != null) {
+			for (String lore : lores) {
+				if (ChatColor.stripColor(lore).equals("Final - Cannot be modified or repaired.")) {
+					if (e.getInventory() instanceof AnvilInventory) {
+						message("That item is final! It cannot be modified or repaired!", (Player) e.getWhoClicked(), "WolfAPI");
+						e.setCancelled(true);
+					}
 				}
 			}
 		}
