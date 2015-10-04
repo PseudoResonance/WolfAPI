@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WolfAPI extends JavaPlugin implements Listener {
@@ -42,8 +43,9 @@ public class WolfAPI extends JavaPlugin implements Listener {
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onInventoryClick(InventoryClickEvent e) {
 		ItemStack clicked = e.getCurrentItem();
-		List<String> lores = clicked.getItemMeta().getLore();
-		if (lores != null) {
+		ItemMeta meta = clicked.getItemMeta();
+		if (meta.hasLore()) {
+			List<String> lores = meta.getLore();
 			for (String lore : lores) {
 				if (ChatColor.stripColor(lore).equals("Final - Cannot be modified or repaired.")) {
 					if (e.getInventory() instanceof AnvilInventory) {
