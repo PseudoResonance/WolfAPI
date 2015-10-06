@@ -70,7 +70,7 @@ public class WolfAPI extends JavaPlugin implements Listener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent e) {
 		List<ItemStack> items = e.getDrops();
 		for (ItemStack item : items) {
