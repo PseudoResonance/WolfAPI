@@ -1,6 +1,6 @@
 package io.github.wolfleader116.wolfapi;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -12,16 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class WolfAPI extends JavaPlugin implements Listener {
-	
-	private HashMap<Player, ItemStack> soulbound = new HashMap<Player, ItemStack>();
 
 	public static WolfAPI plugin;
 	
@@ -71,31 +67,20 @@ public class WolfAPI extends JavaPlugin implements Listener {
 	}
 	
 	@EventHandler
-	public void onPlayerDeath(PlayerDeathEvent e) {
+	public void onPlayerDeath(final PlayerDeathEvent e) {
+		List<ItemStack> soul = new ArrayList<ItemStack>();
 		List<ItemStack> items = e.getDrops();
-		for (ItemStack item : items) {
+		for (final ItemStack item : items) {
 			List<String> lores = item.getItemMeta().getLore();
 			for (String lore : lores) {
 				if (ChatColor.stripColor(lore).contains("Soulbound - Cannot be dropped upon death.")) {
 					e.getDrops().remove(item);
-					soulbound.put(e.getEntity(), item);
+					soul.add(item);
 				}
 			}
 		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerSpawn(PlayerRespawnEvent e) {
-		if (soulbound.containsKey(e.getPlayer())) {
-			e.getPlayer().getInventory().addItem(soulbound.get(e.getPlayer()));
-			soulbound.remove(e.getPlayer());
-		}
-	}
-	
-	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerQuit(PlayerQuitEvent e) {
-		if (soulbound.containsKey(e.getPlayer())) {
-			e.getPlayer().getInventory().addItem(soulbound.get(e.getPlayer()));
+		for (ItemStack item : soul) {
+			e.getEntity().getInventory().addItem(item);
 		}
 	}
 	
