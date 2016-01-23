@@ -31,7 +31,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>${project.artifactId}-Beta</finalName>
 	</build>
 	<repositories>
 		<repository>
