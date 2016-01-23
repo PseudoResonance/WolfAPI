@@ -1,16 +1,24 @@
 package io.github.wolfleader116.wolfapi;
 
-public class ChatComponent {
+public enum ChatComponent {
 	
-	public ComponentType type;
-	public String value;
+	RUN_COMMAND("run_command"),
+	SUGGEST_COMMAND("suggest_command"),
+	OPEN_URL("open_url"),
+	SHOW_TEXT("show_text"),
+	SHOW_ITEM("show_item"),
+	SHOW_ACHIEVEMENT("show_achievement"),
+	SHOW_ENTITY("show_entity"),
+	INSERTION("insertion");
 	
-	public ChatComponent(ComponentType type, String value) {
+	private ChatComponent(String type) {
 		this.type = type;
-		this.value = value;
 	}
 	
-	public ComponentType type() {
+	public String value;
+	public String type;
+	
+	public String type() {
 		return this.type;
 	}
 	
@@ -18,12 +26,9 @@ public class ChatComponent {
 		return this.value;
 	}
 	
-	public void type(ComponentType type) {
-		this.type = type;
-	}
-	
-	public void value(String value) {
+	public ChatComponent value(String value) {
 		this.value = value;
+		return this;
 	}
 
 }

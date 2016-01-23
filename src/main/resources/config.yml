@@ -1,0 +1,60 @@
+################
+#WolfAPI Config#
+################
+
+#Plugin message format
+#Keywords
+#%name% Plugin Name
+#%message% Plugin Message
+PluginChatFormat: '&1&l%name%> &a%message%'
+
+#Plugin error message format
+#Keywords
+#%name% Plugin Name
+#%message% Plugin Message
+PluginErrorFormat: '&4&lError From %name%> &c%message%'
+
+#Error messages for plugins with additional info.
+#Keywords
+#%name% Plugin Name
+#%command% Main Plugin Command
+#%info% Plugin Message (If Specified)
+PluginErrorMessages:
+  NoPermission: 'You do not have permission to run this command!'
+  NotOnline: '&f%info% &cis not online!'
+  NeverJoined: '&f%info% &chas never joined the server!'
+  NotNumber: '&f%info% &cis not a number!'
+  NotACommand: 'That is not an available subcommand! Please use /%command% help to see available subcommands.'
+  Default: 'There has been an error from plugin %name%! Please contact your server administrators.'
+  Custom: '%info%'
+
+#Error messages for plugins without additional info.
+#Keywords
+#%name% Plugin Name
+#%command% Main Plugin Command
+PluginErrorMessagesNoInfo:
+  NoPermission: 'You do not have permission to run this command!'
+  NotOnline: 'That player is not online!'
+  NeverJoined: 'That player has never joined the server!'
+  NotNumber: 'That is not a number!'
+  NotACommand: 'That is not an available subcommand! Please use /%command% help to see available subcommands.'
+  Default: 'There has been an error from plugin %name%! Please contact your server administrators.'
+  Custom: 'There has been an error from plugin %name%! Please contact your server administrators.'
+
+#Strip Plugin Name Color?
+StripPluginNameColor: true
+
+#Strip Plugin Message Color
+StripPluginMessageColor: false
+
+#Plugin Menu Title Color 1
+PluginMenuTitleColor1: 3
+
+#Plugin Menu Title Color 2
+PluginMenuTitleColor2: 6
+
+#Plugin Menu Information Color
+PluginMenuInfoColor: b
+
+#For Internal Use ONLY!
+Version: 1

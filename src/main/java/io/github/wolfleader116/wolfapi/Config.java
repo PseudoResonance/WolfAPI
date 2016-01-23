@@ -18,7 +18,7 @@ public class Config {
 	private FileConfiguration config;
 	private File configFile;
 
-	public Config(String filename, WolfAPI instance) {
+	public Config(String filename, WolfPlugin instance) {
 		if (!filename.endsWith(".yml")) {
 			filename += ".yml";
 		}
@@ -30,7 +30,7 @@ public class Config {
 		reload();
 	}
 
-	public Config(File folder, String filename, WolfAPI instance) {
+	public Config(File folder, String filename, WolfPlugin instance) {
 		if (!filename.endsWith(".yml")) {
 			filename += ".yml";
 		}

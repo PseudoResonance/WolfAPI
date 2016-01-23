@@ -58,11 +58,11 @@ public class ChatElement {
 			ret = ret + "}";
 		} else {
 			for (ChatComponent c : components) {
-				if ((c.type() == ComponentType.OPEN_URL) || (c.type() == ComponentType.RUN_COMMAND) || (c.type() == ComponentType.SUGGEST_COMMAND)) {
-					ret = ret + ",\"clickEvent\":{\"action\":\"" + c.type().toString().toLowerCase() + "\",\"value\":\"" + c.value() + "\"}";
-				} else if ((c.type() == ComponentType.SHOW_TEXT) || (c.type() == ComponentType.SHOW_ENTITY) || (c.type() == ComponentType.SHOW_ITEM) || (c.type() == ComponentType.SHOW_ACHIEVEMENT)) {
-					ret = ret + ",\"hoverEvent\":{\"action\":\"" + c.type().toString().toLowerCase() + "\",\"value\":\"" + c.value() + "\"}";
-				} else if  (c.type() == ComponentType.INSERTION) {
+				if ((c == ChatComponent.OPEN_URL) || (c == ChatComponent.RUN_COMMAND) || (c == ChatComponent.SUGGEST_COMMAND)) {
+					ret = ret + ",\"clickEvent\":{\"action\":\"" + c.type() + "\",\"value\":\"" + c.value() + "\"}";
+				} else if ((c == ChatComponent.SHOW_TEXT) || (c == ChatComponent.SHOW_ENTITY) || (c == ChatComponent.SHOW_ITEM) || (c == ChatComponent.SHOW_ACHIEVEMENT)) {
+					ret = ret + ",\"hoverEvent\":{\"action\":\"" + c.type() + "\",\"value\":\"" + c.value() + "\"}";
+				} else if  (c == ChatComponent.INSERTION) {
 					ret = ret + ",\"insertion\":\"" + c.value() + "\"";
 				}
 			}

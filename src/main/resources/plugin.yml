@@ -1,5 +1,28 @@
 name: WolfAPI
 author: WolfLeader116
 main: io.github.wolfleader116.wolfapi.WolfAPI
-version: Pre-3.0-16
-description: An API for Easy Access to Resources
+version: 3.0-Beta-1
+description: An API for Easy Access to Resources and Unification Across Plugins
+commands:
+  wolfapi:
+    description: Main WolfAPI Command
+  pl:
+    description: Shows all WolfPlugins
+  allpl:
+    description: Shows all plugins
+permissions:
+  wolfapi.reset:
+    description: Allows the player to reset the WolfAPI config
+  wolfapi.reload:
+    description: Allows the player to reload the WolfAPI config
+  wolfapi.pl:
+    description: Allows the player to see all WolfPlugins
+  wolfapi.allpl:
+    description: Allows the player to see all plugins
+  wolfapi.*:
+    description: Allows the player complete access to all WolfAPI permissions
+    children:
+      wolfapi.reset: true
+      wolfapi.reload: true
+      wolfapi.pl: true
+      wolfapi.allpl: true

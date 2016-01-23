@@ -1,5 +1,5 @@
-# CustomItems
-CustomItems Plugin
+# WolfAPI-Beta
+WolfAPI-Beta Plugin
 
 ## Building
 We use maven to compile our dependencies.
