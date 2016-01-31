@@ -56,5 +56,8 @@ PluginMenuTitleColor2: 6
 #Plugin Menu Information Color
 PluginMenuInfoColor: b
 
+#Replace Plugin List Commands?
+ReplacePluginCommand: true
+
 #For Internal Use ONLY!
 Version: 1

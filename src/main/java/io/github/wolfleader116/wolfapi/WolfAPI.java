@@ -17,7 +17,6 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 import io.github.wolfleader116.wolfapi.commands.DownloadSC;
 import io.github.wolfleader116.wolfapi.commands.PluginsC;
 import io.github.wolfleader116.wolfapi.commands.WolfAPIC;
