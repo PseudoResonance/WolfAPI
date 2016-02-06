@@ -137,9 +137,9 @@ public class TypewriterText {
 		while (matcher.find()) {
 			matches++;
 		}
-		if (matches == (last.length() / 2)) {
+		if (matches * 2 == last.length()) {
 			output.remove(output.size() - 1);
-			output.remove(output.size() - 2);
+			output.remove(output.size() - 1);
 			output.add(secondLast + last);
 		}
 		return output.toArray(new String[output.size()]);
