@@ -59,5 +59,99 @@ PluginMenuInfoColor: b
 #Replace Plugin List Commands?
 ReplacePluginCommand: true
 
-#For Internal Use ONLY!
+#Enable NoteBlock Music?
+EnableMusic: true
+
+#Broadcast Song Name to BarAPI?
+BarBroadcast: true
+
+#Broadcast Song Name to TitleManager?
+TitleBroadcast: true
+
+#Enable Scoreboard?
+EnableScoreboard: true
+
+#Scoreboard Title
+ScoreboardTitle: '&6Server Name'
+
+#Scoreboard Config
+#Keywords
+#%players% Number of Online Players
+#%staff% Number of Online Staff (Staff Defined Below)
+#%song% NoteBlock Song Name
+#%money% Player Balance
+#Types of Text
+#Text - Regular Text
+#TypeWriter - TypeWriter Like Text
+Scoreboard:
+  Line1:
+    Type: 'TypeWriter'
+    Text:
+      - '&bWelcome to the Server!'
+      - '&aTypeWriter Text!'
+  Line2:
+    Text:
+      - '&6Players Online'
+  Line3:
+    Text:
+      - '&a%players%'
+  Line4:
+    Text:
+      - '&6Staff Online'
+  Line5:
+    Text:
+      - '&a%staff%'
+  Line6:
+    Text:
+      - '&6Current Song'
+  Line7:
+    Text:
+      - '&a%song%'
+  Line8:
+    Text:
+      - '&6Your Money'
+  Line9:
+    Text:
+      - '&a%money%'
+
+#TypeWriter Text Settings
+#Delay between each time a character is added or removed (in ticks)
+CharacterChangeDelay: 5
+#Delay between when all characters are added and when characters begin to be removed (in ticks)
+EndDelay: 40
+#Delay between when all characters are removed and when characters begin to be added (in ticks)
+StartDelay: 20
+#Delay between pointer flashing on or off
+PointerDelay: 5
+#Pointer
+Pointer: '_'
+
+#Permission Plugin Groups for Staff
+StaffGroups:
+  - 'helper'
+  - 'helperplus'
+  - 'moderator'
+  - 'moderatorplus'
+  - 'admin'
+  - 'headadmin'
+  - 'coowner'
+  - 'owner'
+
+#Broadcast Message on BarAPI (%songname% is the new song name)
+BarBroadcastMessage: '§a§lNow Playing §6"§c§l%songname§6"'
+
+#Seconds the BarAPI shows the message
+BarBroadcastLength: 10
+
+#Broadcast Message on TitleManager (%songname% is the new song name)
+TitleBroadcastMessage: '§a§lNow Playing §6"§c§l%songname§6"'
+
+#Scoreboard Update Time for Money in Ticks (20 ticks per second) (Unless WolfLeader116 Economy is Enabled)
+MoneyUpdate: 1200
+
+#Scoreboard Disable Disappear Delay
+ScoreboardDelay: 30
+
+#For Internal Use ONLY! DO NOT EDIT!
 Version: 1
+LastSong: 0

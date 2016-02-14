@@ -19,6 +19,10 @@ permissions:
     description: Allows the player to see all WolfPlugins
   wolfapi.allpl:
     description: Allows the player to see all plugins
+  wolfapi.scoreboard:
+    description: Allows the player to enable/disable their scoreboard
+  wolfapi.scoreboard.others:
+    description: Allows the player to enable/disable another's scoreboard
   wolfapi.*:
     description: Allows the player complete access to all WolfAPI permissions
     children:
@@ -26,3 +30,5 @@ permissions:
       wolfapi.reload: true
       wolfapi.pl: true
       wolfapi.allpl: true
+      wolfapi.scoreboard: true
+      wolfapi.scoreboard.others: true

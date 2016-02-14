@@ -2,7 +2,9 @@ package io.github.wolfleader116.wolfapi;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,28 +16,79 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
+import com.xxmicloxx.noteblockapi.NBSDecoder;
+import com.xxmicloxx.noteblockapi.RadioSongPlayer;
+import com.xxmicloxx.noteblockapi.Song;
+import com.xxmicloxx.noteblockapi.SongPlayer;
+
 import io.github.wolfleader116.wolfapi.commands.DownloadSC;
 import io.github.wolfleader116.wolfapi.commands.PluginsC;
+import io.github.wolfleader116.wolfapi.commands.ScoreboardSC;
 import io.github.wolfleader116.wolfapi.commands.WolfAPIC;
 import io.github.wolfleader116.wolfapi.tabcompleters.WolfAPITC;
+import io.puharesource.mc.titlemanager.api.ActionbarTitleObject;
+import me.confuser.barapi.BarAPI;
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
 
 public class WolfAPI extends WolfPlugin implements Listener {
+	
+	private static final Logger log = Logger.getLogger("Minecraft");
 
 	public static WolfPlugin plugin;
 	
+	private static SongPlayer songPlayer;
+	private static int songNumber = 0;
+	
+	private static boolean barEnabled = false;
+	private static boolean titleEnabled = false;
+	private static boolean vaultEnabled = false;
+	private static boolean barBroadcast = true;
+	private static boolean titleBroadcast = true;
+	
+	private static List<String> noMusic = new ArrayList<String>();
+	
+	private static List<String> playerDataFiles = new ArrayList<String>();
+	
+	public static Economy economy = null;
+	public static Chat chat = null;
+	
+	private boolean setupEconomy() {
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+		if (economyProvider != null) {
+			economy = economyProvider.getProvider();
+		}
+		return (economy != null);
+	}
+	
+	private boolean setupChat() {
+		RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+		if (chatProvider != null) {
+			chat = chatProvider.getProvider();
+		}
+		return (chat != null);
+	}
+	
 	@Override
 	public void onEnable() {
+		new File(plugin.getDataFolder() + File.pathSeparator + "songs").mkdir();
 		this.saveDefaultConfig();
-		if (this.getConfig().getInt("Version") != 1) {
+		if (this.getConfig().getInt("Version") != 2) {
 			File configFile = new File(WolfAPI.plugin.getDataFolder(), "config.yml");
 			configFile.delete();
 			this.saveDefaultConfig();
 			this.reloadConfig();
 		}
 		plugin = this;
+		setupEconomy();
+		setupChat();
 		Bukkit.getPluginManager().registerEvents(this, this);
 		this.setPluginName("WolfAPI");
 		List<String> configFiles = new ArrayList<String>();
@@ -49,11 +102,66 @@ public class WolfAPI extends WolfPlugin implements Listener {
 		this.getCommand("allpl").setExecutor(new PluginsC());
 		List<SubCommand> subCommands = new ArrayList<SubCommand>();
 		subCommands.add(new SubCommand("download", "Gives the download link for this mod.", new DownloadSC()));
+		subCommands.add(new SubCommand("sc", "Toggles the scoreboard visibility", new ScoreboardSC()));
+		subCommands.add(new SubCommand("scoreboard", "Toggles the scoreboard visibility", new ScoreboardSC()));
 		this.setCommands(subCommands);
+		File dir = new File(plugin.getDataFolder() + File.pathSeparator + "playerdata");
+		List<String> filelist = new ArrayList<String>(Arrays.asList(dir.list()));
+		playerDataFiles = filelist;
+		for (String f : filelist) {
+			Config c = new Config(plugin.getDataFolder() + File.pathSeparator + "playerdata" + File.pathSeparator + f, plugin);
+			if (!(c.getConfig().getBoolean("music"))) {
+				noMusic.add(c.getConfig().getString("name"));
+			}
+		}
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceHolderAPI")) {
+			PlaceHolderAPI.
+		}
+		ScoreboardOLD.setTitle(plugin.getConfig().getString("ScoreboardTitle"));
 		try {
 			registerPlugin();
 		} catch (PluginAlreadyRegisteredException e) {
 			e.printStackTrace();
+		}
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")) {
+			log.info("WolfAPI - Vault was not found on the server! Money support is disabled.");
+		} else {
+			vaultEnabled = true;
+		}
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("TitleManager")) {
+			log.info("WolfAPI - Vault was not found on the server! Title support is disabled.");
+		} else {
+			titleEnabled = true;
+		}
+		if (Bukkit.getServer().getPluginManager().isPluginEnabled("BarAPI")) {
+			log.info("WolfAPI - Vault was not found on the server! BossBar support is disabled.");
+		} else {
+			barEnabled = true;
+		}
+		if (plugin.getConfig().getBoolean("BarBroadcast")) {
+			barBroadcast = true;
+		} else {
+			barBroadcast = false;
+		}
+		if (plugin.getConfig().getBoolean("TitleBroadcast")) {
+			titleBroadcast = true;
+		} else {
+			titleBroadcast = false;
+		}
+		if (plugin.getConfig().getBoolean("EnableMusic")) {
+			songNumber = plugin.getConfig().getInt("LastSong");
+			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+				public void run() {
+					firstLoop();
+				}
+			}, 200);
+		}
+		if (vaultEnabled && plugin.getConfig().getInt("MoneyUpdate") > 0 && !(Bukkit.getServer().getPluginManager().isPluginEnabled("Economy"))) {
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+				public void run() {
+					ScoreboardOLD.update();
+				}
+			}, plugin.getConfig().getInt("MoneyUpdate"), plugin.getConfig().getInt("MoneyUpdate"));
 		}
 	}
 	
@@ -66,6 +174,22 @@ public class WolfAPI extends WolfPlugin implements Listener {
 		}
 		WolfPlugin.plugins = null;
 		plugin = null;
+	}
+	
+	public static List<String> getDataFiles() {
+		return playerDataFiles;
+	}
+	
+	public static boolean isVaultEnabled() {
+		return vaultEnabled;
+	}
+	
+	public static boolean isTitleEnabled() {
+		return titleEnabled;
+	}
+	
+	public static boolean isBarEnabled() {
+		return barEnabled;
 	}
 	
 	public static List<WolfPlugin> getPlugins() {
@@ -82,6 +206,215 @@ public class WolfAPI extends WolfPlugin implements Listener {
 	
 	public static ChatColor getMenuInfoColor() {
 		return ChatColor.getByChar(WolfAPI.plugin.getConfig().getString("PluginMenuInfoColor"));
+	}
+	
+	public static boolean isMusic() {
+		if (WolfAPI.plugin.getConfig().getBoolean("EnableMusic")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void endLoop(final SongPlayer sp) {
+		if (sp.isPlaying()) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+				public void run() {
+					endLoop(sp);
+				}
+			}, 5);
+		} else {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+				public void run() {
+					startLoop();
+				}
+			}, 100);
+		}
+	}
+
+	public void firstLoop() {
+		try {
+			String songname = name();
+			Song s = NBSDecoder.parse(new File(getDataFolder() + File.pathSeparator + "songs", songname + ".nbs"));
+			SongPlayer sp = new RadioSongPlayer(s);
+			sp.setAutoDestroy(true);
+			for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+				if (noMusic.contains(online.getName())) {
+					sp.addPlayer(online);
+					if (barEnabled && barBroadcast) {
+						String message = plugin.getConfig().getString("BarBroadcastMessage");
+						message = message.replaceAll("%songname%", songname);
+						BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
+					}
+					if (titleEnabled && titleBroadcast) {
+						String message = plugin.getConfig().getString("TitleBroadcastMessage");
+						message = message.replaceAll("%songname%", songname);
+						sendActionbarMessage(online, message);
+					}
+				}
+			}
+			ScoreboardOLD.setSong(songname);
+			sp.setPlaying(true);
+			endLoop(sp);
+			songPlayer = sp;
+		} catch (Exception e) {
+			songNumber = 0;
+			plugin.getConfig().set("LastSong", 0);
+			plugin.saveConfig();
+			String songname = name();
+			if (new File(getDataFolder() + File.pathSeparator + "songs", songname + ".nbs").exists() != true) {
+				log.severe("NO VALID SONG FILES FOUND!");
+			} else {
+				Song s = NBSDecoder.parse(new File(getDataFolder() + File.pathSeparator + "songs", songname + ".nbs"));
+				SongPlayer sp = new RadioSongPlayer(s);
+				sp.setAutoDestroy(true);
+				for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+					if (noMusic.contains(online.getName())) {
+						sp.addPlayer(online);
+						if (barEnabled && barBroadcast) {
+							String message = plugin.getConfig().getString("BarBroadcastMessage");
+							message = message.replaceAll("%songname%", songname);
+							BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
+						}
+						if (titleEnabled && titleBroadcast) {
+							String message = plugin.getConfig().getString("TitleBroadcastMessage");
+							message = message.replaceAll("%songname%", songname);
+							sendActionbarMessage(online, message);
+						}
+					}
+				}
+				ScoreboardOLD.setSong(songname);
+				sp.setPlaying(true);
+				endLoop(sp);
+				songPlayer = sp;
+			}
+		}
+	}
+
+	public void startLoop() {
+		try {
+			songNumber++;
+			plugin.getConfig().set("LastSong", songNumber);
+			plugin.saveConfig();
+			String songname = name();
+			Song s = NBSDecoder.parse(new File(getDataFolder() + File.pathSeparator + "songs", songname + ".nbs"));
+			SongPlayer sp = new RadioSongPlayer(s);
+			sp.setAutoDestroy(true);
+			for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+				if (noMusic.contains(online.getName())) {
+					sp.addPlayer(online);
+					if (barEnabled && barBroadcast) {
+						String message = plugin.getConfig().getString("BarBroadcastMessage");
+						message = message.replaceAll("%songname%", songname);
+						BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
+					}
+					if (titleEnabled && titleBroadcast) {
+						String message = plugin.getConfig().getString("TitleBroadcastMessage");
+						message = message.replaceAll("%songname%", songname);
+						sendActionbarMessage(online, message);
+					}
+				}
+			}
+			ScoreboardOLD.setSong(songname);
+			sp.setPlaying(true);
+			endLoop(sp);
+			songPlayer = sp;
+		} catch (Exception e) {
+			songNumber = 0;
+			plugin.getConfig().set("LastSong", 0);
+			plugin.saveConfig();
+			String songname = name();
+			if (new File(getDataFolder() + File.pathSeparator + "songs", songname + ".nbs").exists() != true) {
+				log.severe("NO VALID SONG FILES FOUND!");
+			} else {
+				Song s = NBSDecoder.parse(new File(getDataFolder() + File.pathSeparator + "songs", songname + ".nbs"));
+				SongPlayer sp = new RadioSongPlayer(s);
+				sp.setAutoDestroy(true);
+				for (Player online : Bukkit.getServer().getOnlinePlayers()) {
+					if (noMusic.contains(online.getName())) {
+						sp.addPlayer(online);
+						if (barEnabled && barBroadcast) {
+							String message = plugin.getConfig().getString("BarBroadcastMessage");
+							message = message.replaceAll("%songname%", songname);
+							BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
+						}
+						if (titleEnabled && titleBroadcast) {
+							String message = plugin.getConfig().getString("TitleBroadcastMessage");
+							message = message.replaceAll("%songname%", songname);
+							sendActionbarMessage(online, message);
+						}
+					}
+				}
+				ScoreboardOLD.setSong(songname);
+				sp.setPlaying(true);
+				endLoop(sp);
+				songPlayer = sp;
+			}
+		}
+	}
+
+	private void sendActionbarMessage(Player player, String message) {
+		new ActionbarTitleObject(message).send(player);
+	}
+
+	public static String name() {
+		if (songNumber == -1) {
+			File f = new File(plugin.getDataFolder() + File.pathSeparator + "songs");
+			List<String> songlist = new ArrayList<String>(Arrays.asList(f.list()));
+			String[] songs = songlist.toArray(new String[0]);
+			String song = songs[0].replace(".nbs", "");
+			return song;
+		} else {
+			File f = new File(plugin.getDataFolder() + File.pathSeparator + "songs");
+			List<String> songlist = new ArrayList<String>(Arrays.asList(f.list()));
+			String[] songs = songlist.toArray(new String[0]);
+			String song = songs[songNumber].replace(".nbs", "");
+			return song;
+		}
+	}
+	
+	public static String getDataFile(String p) {
+		for (String f : playerDataFiles) {
+			Config c = new Config(plugin.getDataFolder() + File.pathSeparator + "playerdata" + File.pathSeparator + f, plugin);
+			if (c.getConfig().getString("name").equalsIgnoreCase(p)) {
+				return f;
+			}
+		}
+		return null;
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerJoin(PlayerJoinEvent e) {
+		final String name = e.getPlayer().getName();
+		Config c = new Config(plugin.getDataFolder() + File.pathSeparator + "playerdata" + File.pathSeparator + e.getPlayer().getUniqueId().toString(), plugin);
+		if (!(c.getConfig().getString("name").equalsIgnoreCase(name))) {
+			List<String> oldnames = c.getConfig().getStringList("previousnames");
+			oldnames.add(c.getConfig().getString("name"));
+			c.getConfig().set("previousnames", oldnames);
+			c.getConfig().set("name", name);
+		}
+		Long now = System.currentTimeMillis() - 10800000;
+		c.getConfig().set("lastjoinleave", now);
+		if (c.getConfig().getLong("firstjoin") == 0) {
+			c.getConfig().set("firstjoin", now);
+		}
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			public void run() {
+				songPlayer.addPlayer(Bukkit.getServer().getPlayer(name));
+				ScoreboardOLD.update();
+			}
+		}, 20);
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerQuit(PlayerQuitEvent e) {
+		Config c = new Config(plugin.getDataFolder() + File.pathSeparator + "playerdata" + File.pathSeparator + e.getPlayer().getUniqueId().toString(), plugin);
+		c.getConfig().set("lastjoinleave", System.currentTimeMillis() - 10800000);
+		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+			public void run() {
+				ScoreboardOLD.update();
+			}
+		}, 20);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)

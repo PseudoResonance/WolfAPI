@@ -22,7 +22,7 @@ public class TypewriterText {
 	private long startDelay;
 	private JavaPlugin plugin;
 	private boolean pointer = false;
-	private List<String> input;
+	protected List<String> input;
 	private int current = 0;
 	private String currentOutput = "";
 	private String[] currentParts;
@@ -69,6 +69,7 @@ public class TypewriterText {
 			}
 		}
 	}
+	
 	private void timer() {
 		currentParts = getCurrentParts(input.get(current));
 		BukkitRunnable add = new TypewriterAdd(this, currentParts);
@@ -147,10 +148,12 @@ public class TypewriterText {
 	
 	void setOutput(String output) {
 		currentOutput = output;
+		ScoreboardOLD.update();
 	}
 	
 	void setPointer(boolean pointer) {
 		this.pointer = pointer;
+		ScoreboardOLD.update();
 	}
 
 }
