@@ -3,8 +3,11 @@ package io.github.wolfleader116.wolfapi;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,10 +33,13 @@ import com.xxmicloxx.noteblockapi.SongPlayer;
 
 import io.github.wolfleader116.wolfapi.commands.DownloadSC;
 import io.github.wolfleader116.wolfapi.commands.PluginsC;
+import io.github.wolfleader116.wolfapi.commands.ScoreboardC;
 import io.github.wolfleader116.wolfapi.commands.ScoreboardSC;
 import io.github.wolfleader116.wolfapi.commands.WolfAPIC;
 import io.github.wolfleader116.wolfapi.tabcompleters.WolfAPITC;
 import io.puharesource.mc.titlemanager.api.ActionbarTitleObject;
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderHook;
 import me.confuser.barapi.BarAPI;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
@@ -47,11 +53,10 @@ public class WolfAPI extends WolfPlugin implements Listener {
 	private static SongPlayer songPlayer;
 	private static int songNumber = 0;
 	
-	private static boolean barEnabled = false;
-	private static boolean titleEnabled = false;
-	private static boolean vaultEnabled = false;
 	private static boolean barBroadcast = true;
 	private static boolean titleBroadcast = true;
+	
+	private static String currentSong = "None";
 	
 	private static List<String> noMusic = new ArrayList<String>();
 	
@@ -100,6 +105,7 @@ public class WolfAPI extends WolfPlugin implements Listener {
 		this.getCommand("wolfapi").setTabCompleter(new WolfAPITC());
 		this.getCommand("pl").setExecutor(new PluginsC());
 		this.getCommand("allpl").setExecutor(new PluginsC());
+		this.getCommand("scoreboard").setExecutor(new ScoreboardC());
 		List<SubCommand> subCommands = new ArrayList<SubCommand>();
 		subCommands.add(new SubCommand("download", "Gives the download link for this mod.", new DownloadSC()));
 		subCommands.add(new SubCommand("sc", "Toggles the scoreboard visibility", new ScoreboardSC()));
@@ -114,29 +120,39 @@ public class WolfAPI extends WolfPlugin implements Listener {
 				noMusic.add(c.getConfig().getString("name"));
 			}
 		}
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceHolderAPI")) {
-			PlaceHolderAPI.
+		if (!(Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceHolderAPI"))) {
+			log.info("WolfAPI - PlaceHolderAPI was not found on the server! Only basic placeholder support is enabled.");
+		} else {
+			enablePlaceholders();
 		}
-		ScoreboardOLD.setTitle(plugin.getConfig().getString("ScoreboardTitle"));
+		WolfBoard.setTitle(plugin.getConfig().getStringList("ScoreboardTitle"));
+		Map<Integer, ScoreboardLine> rawLines = new HashMap<Integer, ScoreboardLine>();
+		for (String key : plugin.getConfig().getConfigurationSection("Scoreboard").getKeys(false)) {
+			String type = plugin.getConfig().getString("Scoreboard." + key + ".Type");
+			if (type.equalsIgnoreCase("TypeWriter")) {
+				TypewriterInfo ti = new TypewriterInfo(plugin.getConfig().getLong("Scoreboard." + key + ".UpdateDelay"), plugin.getConfig().getStringList("Scoreboard." + key + ".Text"), plugin.getConfig().getLong("Scoreboard." + key + ".PointerDelay"), plugin.getConfig().getString("Scoreboard." + key + ".Pointer").toCharArray()[0], plugin.getConfig().getLong("Scoreboard." + key + ".EndDelay"), plugin.getConfig().getLong("Scoreboard." + key + ".StartDelay"));
+				int num = Integer.valueOf(Pattern.compile("line", Pattern.CASE_INSENSITIVE).matcher(key).replaceAll(""));
+				rawLines.put(num, ti);
+			} else if (type.equalsIgnoreCase("Text")) {
+				TextInfo sl = new TextInfo(plugin.getConfig().getLong("Scoreboard." + key + ".UpdateDelay"), plugin.getConfig().getStringList("Scoreboard." + key + ".Text"));
+				int num = Integer.valueOf(Pattern.compile("line", Pattern.CASE_INSENSITIVE).matcher(key).replaceAll(""));
+				rawLines.put(num, sl);
+			}
+		}
+		WolfBoard.setRawLines(rawLines);
 		try {
 			registerPlugin();
 		} catch (PluginAlreadyRegisteredException e) {
 			e.printStackTrace();
 		}
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("Vault")) {
+		if (!(Bukkit.getServer().getPluginManager().isPluginEnabled("Vault"))) {
 			log.info("WolfAPI - Vault was not found on the server! Money support is disabled.");
-		} else {
-			vaultEnabled = true;
 		}
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("TitleManager")) {
-			log.info("WolfAPI - Vault was not found on the server! Title support is disabled.");
-		} else {
-			titleEnabled = true;
+		if (!(Bukkit.getServer().getPluginManager().isPluginEnabled("TitleManager"))) {
+			log.info("WolfAPI - TitleManager was not found on the server! Title support is disabled.");
 		}
-		if (Bukkit.getServer().getPluginManager().isPluginEnabled("BarAPI")) {
-			log.info("WolfAPI - Vault was not found on the server! BossBar support is disabled.");
-		} else {
-			barEnabled = true;
+		if (!(Bukkit.getServer().getPluginManager().isPluginEnabled("BarAPI"))) {
+			log.info("WolfAPI - BarAPI was not found on the server! BossBar support is disabled.");
 		}
 		if (plugin.getConfig().getBoolean("BarBroadcast")) {
 			barBroadcast = true;
@@ -156,13 +172,6 @@ public class WolfAPI extends WolfPlugin implements Listener {
 				}
 			}, 200);
 		}
-		if (vaultEnabled && plugin.getConfig().getInt("MoneyUpdate") > 0 && !(Bukkit.getServer().getPluginManager().isPluginEnabled("Economy"))) {
-			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-				public void run() {
-					ScoreboardOLD.update();
-				}
-			}, plugin.getConfig().getInt("MoneyUpdate"), plugin.getConfig().getInt("MoneyUpdate"));
-		}
 	}
 	
 	@Override
@@ -176,20 +185,71 @@ public class WolfAPI extends WolfPlugin implements Listener {
 		plugin = null;
 	}
 	
+	public static void enablePlaceholders() {
+		boolean hookedplayers = PlaceholderAPI.registerPlaceholderHook(WolfAPI.plugin, new PlaceholderHook() {
+			@Override
+			public String onPlaceholderRequest(Player p, String identifier) {
+				if (identifier.equals("onlineplayers")) {
+					int players = 0;
+					for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
+						if (pl != null) {
+							if (p.canSee(pl)) {
+								players++;
+							}
+						}
+					}
+					return String.valueOf(players);
+				}
+				return null;
+				}
+			});
+		if (!(hookedplayers)) {
+			log.info("Error hooking into PlaceholderAPI!");
+		}
+		boolean hookedstaff = PlaceholderAPI.registerPlaceholderHook(WolfAPI.plugin, new PlaceholderHook() {
+			@Override
+			public String onPlaceholderRequest(Player p, String identifier) {
+				if (identifier.equals("onlinestaff")) {
+					int staff = 0;
+					for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
+						if (pl != null) {
+							for (String g : WolfAPI.plugin.getConfig().getStringList("StaffGroups")) {
+								if (WolfAPI.chat.playerInGroup(pl, g)) {
+									if (p.canSee(pl)) {
+										staff++;
+									}
+								}
+							}
+						}
+					}
+					return String.valueOf(staff);
+				}
+				return null;
+				}
+			});
+		if (!(hookedstaff)) {
+			log.info("Error hooking into PlaceholderAPI!");
+		}
+		boolean hookedsong = PlaceholderAPI.registerPlaceholderHook(WolfAPI.plugin, new PlaceholderHook() {
+			@Override
+			public String onPlaceholderRequest(Player p, String identifier) {
+				if (identifier.equals("currentsong")) {
+					return currentSong;
+				}
+				return null;
+				}
+			});
+		if (!(hookedsong)) {
+			log.info("Error hooking into PlaceholderAPI!");
+		}
+	}
+	
+	public static String getCurrentSong() {
+		return currentSong;
+	}
+	
 	public static List<String> getDataFiles() {
 		return playerDataFiles;
-	}
-	
-	public static boolean isVaultEnabled() {
-		return vaultEnabled;
-	}
-	
-	public static boolean isTitleEnabled() {
-		return titleEnabled;
-	}
-	
-	public static boolean isBarEnabled() {
-		return barEnabled;
 	}
 	
 	public static List<WolfPlugin> getPlugins() {
@@ -241,19 +301,19 @@ public class WolfAPI extends WolfPlugin implements Listener {
 			for (Player online : Bukkit.getServer().getOnlinePlayers()) {
 				if (noMusic.contains(online.getName())) {
 					sp.addPlayer(online);
-					if (barEnabled && barBroadcast) {
+					if ((Bukkit.getServer().getPluginManager().isPluginEnabled("BarAPI")) && barBroadcast) {
 						String message = plugin.getConfig().getString("BarBroadcastMessage");
 						message = message.replaceAll("%songname%", songname);
 						BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
 					}
-					if (titleEnabled && titleBroadcast) {
+					if ((Bukkit.getServer().getPluginManager().isPluginEnabled("TitleManager")) && titleBroadcast) {
 						String message = plugin.getConfig().getString("TitleBroadcastMessage");
 						message = message.replaceAll("%songname%", songname);
 						sendActionbarMessage(online, message);
 					}
 				}
 			}
-			ScoreboardOLD.setSong(songname);
+			currentSong = songname;
 			sp.setPlaying(true);
 			endLoop(sp);
 			songPlayer = sp;
@@ -271,19 +331,19 @@ public class WolfAPI extends WolfPlugin implements Listener {
 				for (Player online : Bukkit.getServer().getOnlinePlayers()) {
 					if (noMusic.contains(online.getName())) {
 						sp.addPlayer(online);
-						if (barEnabled && barBroadcast) {
+						if ((Bukkit.getServer().getPluginManager().isPluginEnabled("BarAPI")) && barBroadcast) {
 							String message = plugin.getConfig().getString("BarBroadcastMessage");
 							message = message.replaceAll("%songname%", songname);
 							BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
 						}
-						if (titleEnabled && titleBroadcast) {
+						if ((Bukkit.getServer().getPluginManager().isPluginEnabled("TitleManager")) && titleBroadcast) {
 							String message = plugin.getConfig().getString("TitleBroadcastMessage");
 							message = message.replaceAll("%songname%", songname);
 							sendActionbarMessage(online, message);
 						}
 					}
 				}
-				ScoreboardOLD.setSong(songname);
+				currentSong = songname;
 				sp.setPlaying(true);
 				endLoop(sp);
 				songPlayer = sp;
@@ -303,19 +363,19 @@ public class WolfAPI extends WolfPlugin implements Listener {
 			for (Player online : Bukkit.getServer().getOnlinePlayers()) {
 				if (noMusic.contains(online.getName())) {
 					sp.addPlayer(online);
-					if (barEnabled && barBroadcast) {
+					if ((Bukkit.getServer().getPluginManager().isPluginEnabled("BarAPI")) && barBroadcast) {
 						String message = plugin.getConfig().getString("BarBroadcastMessage");
 						message = message.replaceAll("%songname%", songname);
 						BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
 					}
-					if (titleEnabled && titleBroadcast) {
+					if ((Bukkit.getServer().getPluginManager().isPluginEnabled("TitleManager")) && titleBroadcast) {
 						String message = plugin.getConfig().getString("TitleBroadcastMessage");
 						message = message.replaceAll("%songname%", songname);
 						sendActionbarMessage(online, message);
 					}
 				}
 			}
-			ScoreboardOLD.setSong(songname);
+			currentSong = songname;
 			sp.setPlaying(true);
 			endLoop(sp);
 			songPlayer = sp;
@@ -333,19 +393,19 @@ public class WolfAPI extends WolfPlugin implements Listener {
 				for (Player online : Bukkit.getServer().getOnlinePlayers()) {
 					if (noMusic.contains(online.getName())) {
 						sp.addPlayer(online);
-						if (barEnabled && barBroadcast) {
+						if ((Bukkit.getServer().getPluginManager().isPluginEnabled("BarAPI")) && barBroadcast) {
 							String message = plugin.getConfig().getString("BarBroadcastMessage");
 							message = message.replaceAll("%songname%", songname);
 							BarAPI.setMessage(online, message, plugin.getConfig().getInt("BarBroadcastLength"));
 						}
-						if (titleEnabled && titleBroadcast) {
+						if ((Bukkit.getServer().getPluginManager().isPluginEnabled("TitleManager")) && titleBroadcast) {
 							String message = plugin.getConfig().getString("TitleBroadcastMessage");
 							message = message.replaceAll("%songname%", songname);
 							sendActionbarMessage(online, message);
 						}
 					}
 				}
-				ScoreboardOLD.setSong(songname);
+				currentSong = songname;
 				sp.setPlaying(true);
 				endLoop(sp);
 				songPlayer = sp;
@@ -384,7 +444,7 @@ public class WolfAPI extends WolfPlugin implements Listener {
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerJoin(PlayerJoinEvent e) {
+	public void onPlayerJoin(final PlayerJoinEvent e) {
 		final String name = e.getPlayer().getName();
 		Config c = new Config(plugin.getDataFolder() + File.pathSeparator + "playerdata" + File.pathSeparator + e.getPlayer().getUniqueId().toString(), plugin);
 		if (!(c.getConfig().getString("name").equalsIgnoreCase(name))) {
@@ -401,18 +461,19 @@ public class WolfAPI extends WolfPlugin implements Listener {
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			public void run() {
 				songPlayer.addPlayer(Bukkit.getServer().getPlayer(name));
-				ScoreboardOLD.update();
+				WolfBoard.addPlayer(e.getPlayer());
 			}
 		}, 20);
 	}
 	
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerQuit(PlayerQuitEvent e) {
+		final String name = e.getPlayer().getName();
 		Config c = new Config(plugin.getDataFolder() + File.pathSeparator + "playerdata" + File.pathSeparator + e.getPlayer().getUniqueId().toString(), plugin);
 		c.getConfig().set("lastjoinleave", System.currentTimeMillis() - 10800000);
 		Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 			public void run() {
-				ScoreboardOLD.update();
+				WolfBoard.removePlayer(name);
 			}
 		}, 20);
 	}
@@ -464,6 +525,27 @@ public class WolfAPI extends WolfPlugin implements Listener {
 		}
 		for (ItemStack item : soul) {
 			e.getEntity().getInventory().addItem(item);
+		}
+	}
+	
+	@EventHandler
+	public void onConfigReload(ConfigReloadEvent e) {
+		if (e.getPlugin().equals(plugin)) {
+			WolfBoard.setTitle(plugin.getConfig().getStringList("ScoreboardTitle"));
+			Map<Integer, ScoreboardLine> rawLines = new HashMap<Integer, ScoreboardLine>();
+			for (String key : plugin.getConfig().getConfigurationSection("Scoreboard").getKeys(false)) {
+				String type = plugin.getConfig().getString("Scoreboard." + key + ".Type");
+				if (type.equalsIgnoreCase("TypeWriter")) {
+					TypewriterInfo ti = new TypewriterInfo(plugin.getConfig().getLong("Scoreboard." + key + ".UpdateDelay"), plugin.getConfig().getStringList("Scoreboard." + key + ".Text"), plugin.getConfig().getLong("Scoreboard." + key + ".PointerDelay"), plugin.getConfig().getString("Scoreboard." + key + ".Pointer").toCharArray()[0], plugin.getConfig().getLong("Scoreboard." + key + ".EndDelay"), plugin.getConfig().getLong("Scoreboard." + key + ".StartDelay"));
+					int num = Integer.valueOf(Pattern.compile("line", Pattern.CASE_INSENSITIVE).matcher(key).replaceAll(""));
+					rawLines.put(num, ti);
+				} else if (type.equalsIgnoreCase("Text")) {
+					TextInfo sl = new TextInfo(plugin.getConfig().getLong("Scoreboard." + key + ".UpdateDelay"), plugin.getConfig().getStringList("Scoreboard." + key + ".Text"));
+					int num = Integer.valueOf(Pattern.compile("line", Pattern.CASE_INSENSITIVE).matcher(key).replaceAll(""));
+					rawLines.put(num, sl);
+				}
+			}
+			WolfBoard.setRawLines(rawLines);
 		}
 	}
 	

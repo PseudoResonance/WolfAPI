@@ -8,33 +8,18 @@ import org.bukkit.entity.Player;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 
-public class TypewriterInfo extends ScoreboardLine {
+public class TextInfo extends ScoreboardLine {
 	
-	private long pointerDelay = 20;
-	private char pointer = '_';
-	private long endDelay = 100;
-	private long startDelay = 20;
-	private boolean pointerStatus = false;
-	private long nextPointerChange = 0;
-	
-	TypewriterInfo(long updateDelay, List<String> text, long pointerDelay, char pointer, long endDelay, long startDelay) {
-		this.pointerDelay = pointerDelay;
-		this.pointer = pointer;
-		this.endDelay = endDelay;
-		this.startDelay = startDelay;
+	TextInfo(long updateDelay, List<String> text) {
 		this.setUpdateDelay(updateDelay);
 		this.setRawText(text);
 	}
 	
-	public void setData(long updateDelay, List<String> text, long pointerDelay, char pointer, long endDelay, long startDelay) {
-		this.pointerDelay = pointerDelay;
-		this.pointer = pointer;
-		this.endDelay = endDelay;
-		this.startDelay = startDelay;
+	public void setData(long updateDelay, List<String> text) {
 		this.setUpdateDelay(updateDelay);
 		this.setRawText(text);
 	}
-	
+
 	@Override
 	public TextRun startTimer(Player p) {
 		List<String> text = this.getRawText();
@@ -87,39 +72,7 @@ public class TypewriterInfo extends ScoreboardLine {
 			}
 		}
 		this.setText(newText);
-		return new TextRun(this.getUpdateDelay(), this.getText(), pointerDelay, pointer, endDelay, startDelay, pointerStatus, nextPointerChange);
+		return new TextRun(this.getUpdateDelay(), this.getText());
 	}
-
-	public long getPointerDelay() {
-		return pointerDelay;
-	}
-
-	public void setPointerDelay(long pointerDelay) {
-		this.pointerDelay = pointerDelay;
-	}
-
-	public long getEndDelay() {
-		return endDelay;
-	}
-
-	public void setEndDelay(long endDelay) {
-		this.endDelay = endDelay;
-	}
-
-	public long getStartDelay() {
-		return startDelay;
-	}
-
-	public void setStartDelay(long startDelay) {
-		this.startDelay = startDelay;
-	}
-
-	public char getPointer() {
-		return pointer;
-	}
-
-	public void setPointer(char pointer) {
-		this.pointer = pointer;
-	}
-
+	
 }

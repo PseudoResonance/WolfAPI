@@ -148,12 +148,10 @@ public class TypewriterText {
 	
 	void setOutput(String output) {
 		currentOutput = output;
-		ScoreboardOLD.update();
 	}
 	
 	void setPointer(boolean pointer) {
 		this.pointer = pointer;
-		ScoreboardOLD.update();
 	}
 
 }

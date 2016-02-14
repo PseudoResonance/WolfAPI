@@ -3,7 +3,9 @@ package io.github.wolfleader116.wolfapi;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoreboardLine {
+import org.bukkit.entity.Player;
+
+public abstract class ScoreboardLine {
 	
 	private long updateDelay = 0;
 	private List<String> text = new ArrayList<String>();
@@ -32,5 +34,7 @@ public class ScoreboardLine {
 	public void setRawText(List<String> rawText) {
 		this.rawText = rawText;
 	}
+	
+	public abstract TextRun startTimer(Player p);
 
 }

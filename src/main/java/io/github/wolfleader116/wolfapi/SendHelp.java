@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -131,6 +132,8 @@ public class SendHelp {
 						plugin.sendError(Errors.CUSTOM, player, "There was an error resetting config files!");
 					}
 					plugin.sendMessage(player, "Reset the config files.");
+					ConfigReloadEvent cre = new ConfigReloadEvent(plugin);
+					Bukkit.getServer().getPluginManager().callEvent(cre);
 				}
 			} else {
 				plugin.sendError(Errors.NO_PERMISSION, player);
@@ -166,6 +169,8 @@ public class SendHelp {
 					log.warning("There was an error resetting config files for plugin " + plugin.getPluginName());
 				}
 				log.info("Reset config for plugin " + plugin.getPluginName());
+				ConfigReloadEvent cre = new ConfigReloadEvent(plugin);
+				Bukkit.getServer().getPluginManager().callEvent(cre);
 			}
 		}
 	}
@@ -195,6 +200,8 @@ public class SendHelp {
 						plugin.sendError(Errors.CUSTOM, player, "There was an error reloading config files!");
 					}
 					plugin.sendMessage(player, "Reloaded the config files.");
+					ConfigReloadEvent cre = new ConfigReloadEvent(plugin);
+					Bukkit.getServer().getPluginManager().callEvent(cre);
 				}
 			} else {
 				plugin.sendError(Errors.NO_PERMISSION, player);
@@ -220,6 +227,8 @@ public class SendHelp {
 					log.warning("There was an error reloading config files for plugin " + plugin.getPluginName());
 				}
 				log.info("Reloaded config for plugin " + plugin.getPluginName());
+				ConfigReloadEvent cre = new ConfigReloadEvent(plugin);
+				Bukkit.getServer().getPluginManager().callEvent(cre);
 			}
 		}
 	}

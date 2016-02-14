@@ -72,59 +72,131 @@ TitleBroadcast: true
 EnableScoreboard: true
 
 #Scoreboard Title
-ScoreboardTitle: '&6Server Name'
+ScoreboardTitle:
+  - ''
+  - '&6S'
+  - '&6Se'
+  - '&6Ser'
+  - '&6Serv'
+  - '&6Serve'
+  - '&6Server'
+  - '&6Server '
+  - '&6Server N'
+  - '&6Server Na'
+  - '&6Server Nam'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Name'
+  - '&6Server Nam'
+  - '&6Server Na'
+  - '&6Server N'
+  - '&6Server '
+  - '&6Server'
+  - '&6Serve'
+  - '&6Serv'
+  - '&6Ser'
+  - '&6Se'
+  - '&6S'
+  - ''
+
+#Scoreboard Title Update Time (in ticks)
+ScoreboardTitleUpdate: 2
 
 #Scoreboard Config
 #Keywords
-#%players% Number of Online Players
-#%staff% Number of Online Staff (Staff Defined Below)
-#%song% NoteBlock Song Name
+#%onlineplayers% Number of Online Players
+#%onlinestaff% Number of Online Staff (Staff Defined Below)
+#%currentsong% NoteBlock Song Name
 #%money% Player Balance
+#
+#IF PlaceholderAPI IS INSTALLED, PUT wolfapi_ BEFORE EACH VARIABLE NAME AND USE %vaulteco_balance% INSTEAD OF %money%
+#
 #Types of Text
 #Text - Regular Text
 #TypeWriter - TypeWriter Like Text
 Scoreboard:
   Line1:
     Type: 'TypeWriter'
+    UpdateDelay: 5
+    EndDelay: 40
+    StartDelay: 20
+    PointerDelay: 5
+    Pointer: '_'
     Text:
       - '&bWelcome to the Server!'
       - '&aTypeWriter Text!'
   Line2:
+    Type: 'Text'
+    UpdateDelay: 0
     Text:
       - '&6Players Online'
   Line3:
+    Type: 'Text'
+    UpdateDelay: 20
     Text:
-      - '&a%players%'
+      - '&a%onlineplayers%'
   Line4:
+    Type: 'Text'
+    UpdateDelay: 0
     Text:
       - '&6Staff Online'
   Line5:
+    Type: 'Text'
+    UpdateDelay: 20
     Text:
-      - '&a%staff%'
+      - '&a%onlinestaff%'
   Line6:
+    Type: 'Text'
+    UpdateDelay: 0
     Text:
       - '&6Current Song'
   Line7:
+    Type: 'Text'
+    UpdateDelay: 20
     Text:
-      - '&a%song%'
+      - '&a%currentsong%'
   Line8:
+    Type: 'Text'
+    UpdateDelay: 0
     Text:
       - '&6Your Money'
   Line9:
+    Type: 'Text'
+    UpdateDelay: 20
     Text:
       - '&a%money%'
 
+#Text Settings
+#UpdateDelay - Delay between changing between each line or updating the line if only one line is present (in ticks)
+
 #TypeWriter Text Settings
-#Delay between each time a character is added or removed (in ticks)
-CharacterChangeDelay: 5
-#Delay between when all characters are added and when characters begin to be removed (in ticks)
-EndDelay: 40
-#Delay between when all characters are removed and when characters begin to be added (in ticks)
-StartDelay: 20
-#Delay between pointer flashing on or off
-PointerDelay: 5
-#Pointer
-Pointer: '_'
+#UpdateDelay - Delay between each time a character is added or removed (in ticks)
+#EndDelay - Delay between when all characters are added and when characters begin to be removed (in ticks)
+#StartDelay - Delay between when all characters are removed and when characters begin to be added (in ticks)
+#PointerDelay - Delay between pointer flashing on or off (For best effect, pointer delay should be a multiple of update delay!)
+#Pointer - Pointer at end of string
 
 #Permission Plugin Groups for Staff
 StaffGroups:
@@ -145,9 +217,6 @@ BarBroadcastLength: 10
 
 #Broadcast Message on TitleManager (%songname% is the new song name)
 TitleBroadcastMessage: '§a§lNow Playing §6"§c§l%songname§6"'
-
-#Scoreboard Update Time for Money in Ticks (20 ticks per second) (Unless WolfLeader116 Economy is Enabled)
-MoneyUpdate: 1200
 
 #Scoreboard Disable Disappear Delay
 ScoreboardDelay: 30

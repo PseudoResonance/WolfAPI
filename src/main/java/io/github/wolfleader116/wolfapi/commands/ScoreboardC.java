@@ -4,22 +4,23 @@ import java.io.File;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import io.github.wolfleader116.wolfapi.Config;
 import io.github.wolfleader116.wolfapi.Errors;
-import io.github.wolfleader116.wolfapi.SubCommand;
-import io.github.wolfleader116.wolfapi.SubCommandExecutor;
 import io.github.wolfleader116.wolfapi.WolfAPI;
 import io.github.wolfleader116.wolfapi.WolfBoard;
 
-public class ScoreboardSC implements SubCommandExecutor {
+public class ScoreboardC implements CommandExecutor {
 	
 	private static final Logger log = Logger.getLogger("Minecraft");
 
-	public boolean onCommand(CommandSender sender, SubCommand subcommand, String[] args) {
-		if (subcommand.getName().equalsIgnoreCase("scoreboard")) {
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (command.getName().equalsIgnoreCase("scoreboard")) {
 			if (sender instanceof Player) {
 				Player player = (Player) sender;
 				if (args.length >= 1) {
