@@ -120,6 +120,7 @@ public class WolfAPI extends WolfPlugin implements Listener {
 				noMusic.add(c.getConfig().getString("name"));
 			}
 		}
+		log.warning("PLACEHOLDERAPI ENABLED: " + Boolean.toString(Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceHolderAPI")));
 		if (!(Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceHolderAPI"))) {
 			log.info("WolfAPI - PlaceHolderAPI was not found on the server! Only basic placeholder support is enabled.");
 		} else {
@@ -185,7 +186,7 @@ public class WolfAPI extends WolfPlugin implements Listener {
 		plugin = null;
 	}
 	
-	public static void enablePlaceholders() {
+	private static void enablePlaceholders() {
 		boolean hookedplayers = PlaceholderAPI.registerPlaceholderHook(WolfAPI.plugin, new PlaceholderHook() {
 			@Override
 			public String onPlaceholderRequest(Player p, String identifier) {

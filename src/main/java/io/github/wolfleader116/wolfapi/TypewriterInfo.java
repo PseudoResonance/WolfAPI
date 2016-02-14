@@ -6,8 +6,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-
 public class TypewriterInfo extends ScoreboardLine {
 	
 	private long pointerDelay = 20;
@@ -48,7 +46,7 @@ public class TypewriterInfo extends ScoreboardLine {
 				newText.add(i, newString);
 			} else {
 				if (Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceHolderAPI")) {
-					String newString = PlaceholderAPI.setPlaceholders(p, text.get(i));
+					String newString = "Hi";
 					if (newString.length() > 32) {
 						newString = newString.substring(0, 31);
 					}
